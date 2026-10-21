@@ -1,0 +1,9 @@
+{
+  "name": "producer",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "dependencies": {
+    "kafkajs": "2.2.4"
+  }
+}

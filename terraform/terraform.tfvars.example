@@ -1,0 +1,3 @@
+# Copy to terraform.tfvars (gitignored) and set real values.
+demo_key        = "choose-a-demo-key"
+cookie_sign_key = "at-least-32-random-characters-generate-with-openssl-rand"

@@ -1,0 +1,270 @@
+/* Architecture view. Builds on style.css (chat and message styles). */
+
+body.tech { background: #0b1120; color: #e2e8f0; }
+
+.tech__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 24px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.tech__title { font-size: 18px; font-weight: 700; }
+.tech__title span { color: #94a3b8; font-weight: 400; }
+.tech__back { color: #fbbf24; text-decoration: none; font-weight: 600; }
+
+.tech__main {
+  display: grid;
+  grid-template-columns: minmax(340px, 2fr) 3fr;
+  gap: 20px;
+  height: calc(100vh - 56px);
+  padding: 20px;
+}
+
+/* The chat sits in the left panel instead of floating. */
+.tech .chat {
+  position: static;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  min-height: 0;
+  color: #0f172a;
+}
+.tech .message { max-width: 85%; }
+
+/* Prebaked prompts, floating just above the input bar. */
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 20px 0;
+  background: #f8fafc;
+}
+.suggestions button {
+  padding: 7px 14px;
+  border: 1px solid #c7d2fe;
+  border-radius: 999px;
+  background: #fff;
+  color: #4338ca;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgb(15 23 42 / 0.12);
+  transition: background 0.15s, transform 0.15s;
+}
+.suggestions button:hover:not(:disabled) { background: #eef2ff; transform: translateY(-1px); }
+.suggestions button:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+.tech__arch {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+
+/* --- Architecture: rail (return path) | main column | Bedrock, centered in the panel --- */
+
+.arch__wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: auto;
+  border: 1px solid #1e293b;
+  border-radius: 16px;
+  background: radial-gradient(circle at 60% 30%, #111a33, #0b1120 70%);
+}
+
+/* Per-step delay toggle, top-right corner of the architecture panel. */
+.delay {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #cbd5e1;
+  font-size: 13px;
+  cursor: pointer;
+}
+.delay input { width: 16px; height: 16px; accent-color: #fbbf24; cursor: pointer; }
+
+.arch {
+  position: relative;
+  margin: auto; /* centers, and scrolls instead of clipping when the panel is too small */
+  display: grid;
+  grid-template-columns: 44px 380px 220px;
+  grid-template-areas:
+    ". browser  ."
+    ". web      ."
+    ". producer ."
+    ". kafka    ."
+    ". consumer bedrock"
+    ". appsync  .";
+  row-gap: 23px;
+  column-gap: 27px;
+  padding: 12px 0;
+}
+
+.arch__lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 2; /* above the boxes (z-index 1): arrows into and inside the consumer box stay visible */
+}
+.arch__lines .line { fill: none; stroke: #fff; stroke-width: 3; }
+.arch__lines .line--return { stroke-dasharray: 8 6; }
+.arch__lines .arrowhead { fill: #fff; }
+.arch__lines .line-label { fill: #cbd5e1; font-size: 11px; }
+.arch__lines .packet { filter: drop-shadow(0 0 6px currentColor); }
+
+.node {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  background: #111827;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.node b { display: block; font-size: 14px; }
+.node small { display: block; color: #94a3b8; font-size: 12px; }
+.node__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 41px;
+  height: 41px;
+  border-radius: 10px;
+  background: #1e293b;
+  font-size: 22px;
+  font-weight: 700;
+}
+img.node__icon { object-fit: cover; }
+/* Black logo (Kafka): white tile so it stays visible on the dark theme. */
+img.node__icon--light { padding: 5px; background: #fff; object-fit: contain; }
+/* Always reserves one line, empty or not, so boxes keep a fixed size as statuses come and go. */
+.node__status {
+  display: block;
+  height: 18px;
+  line-height: 18px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+  color: #fbbf24;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.node.active, .tool.active, .consumer.active {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgb(56 189 248 / 0.25), 0 0 24px rgb(56 189 248 / 0.35);
+}
+.node.error { border-color: #f87171; box-shadow: 0 0 0 3px rgb(248 113 113 / 0.25); }
+
+/* Consumer Lambda: the wrapper the agent and its tools run in. */
+.consumer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 10px 14px 12px;
+  border: 2px solid #ed7100;
+  border-radius: 16px;
+  background: rgb(237 113 0 / 0.07);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.consumer__header { display: flex; align-items: center; gap: 12px; }
+.consumer__header b { display: block; font-size: 14px; }
+.consumer__header small { display: block; color: #94a3b8; font-size: 12px; }
+
+.node--agent { margin: 0 24px; border-color: #6366f1; }
+.node--agent .node__status { color: #c4b5fd; }
+.node--bedrock { align-self: start; } /* vertical position set by technical.js */
+
+.tools {
+  margin-top: 24px; /* with the consumer's 16px gap: 40px agent <-> tool arrows */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.tool {
+  position: relative;
+  z-index: 1;
+  padding: 6px 8px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #111827;
+  color: #e2e8f0;
+  font-size: 13px;
+  text-align: center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.tool small { display: block; color: #94a3b8; font-size: 11px; }
+.tool.selected { border-color: #a78bfa; background: #1e1b4b; }
+
+/* Agent, Bedrock, or a tool doing work: filled, bright, pulsing. */
+.node.working, .tool.working {
+  border-color: #ddd6fe;
+  background: #4c1d95;
+  color: #fff;
+  animation: working 0.8s ease-in-out infinite alternate;
+}
+.node.working small, .tool.working small, .node.working .node__status { color: #ede9fe; }
+
+@keyframes working {
+  from { box-shadow: 0 0 0 2px rgb(167 139 250 / 0.5), 0 0 12px rgb(167 139 250 / 0.4); }
+  to { box-shadow: 0 0 0 6px rgb(167 139 250 / 0.75), 0 0 36px rgb(167 139 250 / 0.8); }
+}
+
+/* --- Workflow log: a floating button at the bottom right; opens as an overlay --- */
+
+.log-panel {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 3;
+  border: 1px solid #334155;
+  border-radius: 999px;
+  background: #020617;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.45);
+}
+.log-panel[open] {
+  width: min(600px, calc(100% - 28px));
+  border-radius: 12px;
+  background: rgb(2 6 23 / 0.85); /* translucent, so the diagram underneath stays visible */
+}
+.log-panel summary {
+  padding: 8px 16px;
+  color: #cbd5e1;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+}
+.log-panel summary:hover { color: #fff; }
+
+.log {
+  height: 180px;
+  margin: 0;
+  padding: 0 14px 10px;
+  overflow-y: auto;
+  list-style: none;
+  font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #94a3b8;
+}
+.log time { color: #475569; margin-right: 8px; }
+.log b { color: #e2e8f0; font-weight: 600; }

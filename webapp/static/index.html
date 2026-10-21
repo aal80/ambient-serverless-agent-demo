@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VoltBay — Electronics</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <!-- Mock storefront: decorative backdrop for the support chat. -->
+  <div class="store" aria-hidden="true">
+    <header class="store__nav">
+      <span class="store__logo">⚡ VoltBay</span>
+      <nav>
+        <a>Laptops</a><a>Phones</a><a>Audio</a><a>TV &amp; Home</a><a>Gaming</a><a>Deals</a>
+      </nav>
+      <span class="store__cart">🛒 Cart (2)</span>
+    </header>
+
+    <section class="store__hero">
+      <div>
+        <p class="store__eyebrow">Fall Tech Sale</p>
+        <h2>Up to 30% off laptops &amp; headphones</h2>
+        <p>Free 2-day shipping on orders over $50. 30-day hassle-free returns.</p>
+        <span class="store__cta">Shop the sale</span>
+      </div>
+      <span class="store__hero-art">💻</span>
+    </section>
+
+    <section class="store__grid">
+      <article class="product"><span class="product__art">💻</span><h3>Aero 14 Laptop</h3><p>$1,099</p></article>
+      <article class="product"><span class="product__art">🎧</span><h3>Quiet Pro Headphones</h3><p>$249</p></article>
+      <article class="product"><span class="product__art">📱</span><h3>Nova X Smartphone</h3><p>$799</p></article>
+      <article class="product"><span class="product__art">⌚</span><h3>Pulse Smartwatch</h3><p>$329</p></article>
+      <article class="product"><span class="product__art">📺</span><h3>Vista 55" 4K TV</h3><p>$549</p></article>
+      <article class="product"><span class="product__art">🎮</span><h3>Arc Game Controller</h3><p>$69</p></article>
+      <article class="product"><span class="product__art">🔊</span><h3>Boom Mini Speaker</h3><p>$89</p></article>
+      <article class="product"><span class="product__art">📷</span><h3>Snap 24MP Camera</h3><p>$649</p></article>
+    </section>
+  </div>
+
+  <div class="backdrop"></div>
+
+  <a class="tech-link" href="/technical">Let's get technical →</a>
+
+  <!-- Support chat popup -->
+  <section id="chat" class="chat" aria-label="Customer support chat">
+    <header class="chat__header">
+      <span class="chat__avatar">⚡</span>
+      <div class="chat__title">
+        <h1>VoltBay Support</h1>
+        <span id="status" class="status status--connecting">Connecting…</span>
+      </div>
+      <button id="minimize" class="chat__minimize" type="button" aria-label="Minimize chat">—</button>
+    </header>
+    <ol id="messages" class="chat__messages" aria-live="polite"></ol>
+    <form id="composer" class="chat__composer">
+      <input id="input" type="text" maxlength="100" placeholder="Ask about an order, a product, returns or refunds…" autocomplete="off" disabled>
+      <button type="submit" disabled>Send</button>
+    </form>
+  </section>
+
+  <button id="launcher" class="launcher" type="button" aria-label="Open support chat" hidden>💬</button>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

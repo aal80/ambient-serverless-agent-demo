@@ -1,0 +1,40 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+# Lambda zips built from source by archive_file
+.build/
+
+# Local dev env values written by terraform/local-dev.tf (includes the AppSync API key)
+tmp/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Python
+__pycache__/
+*.pyc
+
+# Secrets and local environment
+.env
+.env.*
+
+# Claude Code personal settings (shared settings.json can be committed)
+.claude/settings.local.json
+
+# OS and editors
+.DS_Store
+.vscode/
+.idea/
+*.swp

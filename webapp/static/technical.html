@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VoltBay — Under the hood</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/technical.css">
+</head>
+<body class="tech">
+  <header class="tech__header">
+    <span class="tech__title">⚡ VoltBay <span>· under the hood</span></span>
+    <a class="tech__back" href="/">← Back to the store</a>
+  </header>
+
+  <main class="tech__main">
+    <!-- Left: the same support chat as the store page -->
+    <section class="chat" aria-label="Customer support chat">
+      <header class="chat__header">
+        <span class="chat__avatar">⚡</span>
+        <div class="chat__title">
+          <h1>VoltBay Support</h1>
+          <span id="status" class="status status--connecting">Connecting…</span>
+        </div>
+      </header>
+      <ol id="messages" class="chat__messages" aria-live="polite"></ol>
+      <div class="suggestions" aria-label="Example prompts">
+        <button type="button" disabled>How can you help me?</button>
+        <button type="button" disabled>Refund order 12345</button>
+        <button type="button" disabled>My headphones are broken</button>
+        <button type="button" disabled>Track order 67890</button>
+      </div>
+      <form id="composer" class="chat__composer">
+        <input id="input" type="text" maxlength="100" placeholder="Try: Where is my order #48213?" autocomplete="off" disabled>
+        <button type="submit" disabled>Send</button>
+      </form>
+    </section>
+
+    <!-- Right: architecture, animated by the workflow steps of each message -->
+    <section class="tech__arch" aria-label="Solution architecture">
+      <div class="arch__wrap">
+        <label class="delay"><input id="delay" type="checkbox"> Add delay</label>
+        <div id="arch" class="arch">
+          <svg id="arch-lines" class="arch__lines" aria-hidden="true"></svg>
+
+          <div class="node" id="node-browser" style="grid-area: browser">
+            <span class="node__icon">🌐</span>
+            <div><b>Browser</b><small>Chat UI · WebSocket subscriber</small><em class="node__status"></em></div>
+          </div>
+
+          <div class="node" id="node-web" style="grid-area: web">
+            <img class="node__icon" src="/icons/lambda.png" alt="">
+            <div><b>Web backend</b><small>Lambda Web Function · Express</small><em class="node__status"></em></div>
+          </div>
+
+          <div class="node" id="node-producer" style="grid-area: producer">
+            <img class="node__icon" src="/icons/lambda.png" alt="">
+            <div><b>Support prompt ingestion<br>(Kafka producer)</b><small>AWS Lambda · Node.js 24</small><em class="node__status"></em></div>
+          </div>
+
+          <div class="node" id="node-kafka" style="grid-area: kafka">
+            <img class="node__icon node__icon--light" src="/icons/kafka.png" alt="">
+            <div><b>Confluent or MSK or self-managed Kafka</b><small>Kafka topic customer-messages</small><em class="node__status"></em></div>
+          </div>
+
+          <!-- The consumer Lambda wraps the agent and its tools -->
+          <div class="consumer" id="node-consumer" style="grid-area: consumer">
+            <div class="consumer__header">
+              <img class="node__icon" src="/icons/lambda.png" alt="">
+              <div><b>Support prompt processor<br>(Kafka consumer)</b><small>AWS Lambda · Python · MSK trigger</small><em class="node__status"></em></div>
+            </div>
+
+            <div class="node node--agent" id="node-agent">
+              <span class="node__icon">🤖</span>
+              <div><b>AI agent</b><small>Picks a tool with the LLM</small><em class="node__status"></em></div>
+            </div>
+
+            <div class="tools">
+              <div class="tool" id="node-tool-support"><small>Tool:</small>Tech support</div>
+              <div class="tool" id="node-tool-orders"><small>Tool:</small>Order system</div>
+              <div class="tool" id="node-tool-payments"><small>Tool:</small>Payments</div>
+            </div>
+          </div>
+
+          <div class="node node--bedrock" id="node-bedrock" style="grid-area: bedrock">
+            <img class="node__icon" src="/icons/bedrock.png" alt="">
+            <div><b>Amazon Bedrock</b><small>Claude Haiku 5.5</small><em class="node__status"></em></div>
+          </div>
+
+          <div class="node" id="node-appsync" style="grid-area: appsync">
+            <img class="node__icon" src="/icons/appsync.jpg" alt="">
+            <div><b>AWS AppSync Events</b><small id="appsync-channel">WebSocket pub/sub</small><em class="node__status"></em></div>
+          </div>
+        </div>
+      </div>
+
+      <details class="log-panel">
+        <summary>Workflow log</summary>
+        <ol id="log" class="log"></ol>
+      </details>
+    </section>
+  </main>
+
+  <script type="module" src="/technical.js"></script>
+</body>
+</html>
